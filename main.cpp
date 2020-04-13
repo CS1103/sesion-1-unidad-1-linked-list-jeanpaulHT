@@ -36,8 +36,12 @@ int main() {
     assert(result == "4 3 2 ");
     ll.erase(0);
     ll.insert(2,5);
-    utec::linked_list_t<int> A(ll);
-    utec::linked_list_t<int> temp = ll;
+    ll.insert(2,10);
+    utec::linked_list_t<int> A (move(ll));
+    for(int i = 0; i < 5; i++)
+        A.push_back(i);
+    ll = A;
+    ll.transverse_list();
 
     return 0;
 }

@@ -19,61 +19,44 @@ head(new node<T> {other.head->data,nullptr}), tail(new node<T> {other.tail->data
         temp = temp->next;
     }
 }
-    template <typename T>
+template <typename T>
     utec::linked_list_t<T> &utec::first::linked_list_t<T>::operator=(const utec::linked_list_t<T> &other){
-        size = other.size; //asigno el size del other
         if(this == &other) return *this; // si ambos son iguales regresar el mismo objeto
 
-        //recorriendo el linked list para eliminar todos los nodes
-        auto temp = head; //para recorrer
-        auto pivot = temp; // para eliminar
-        while(temp != tail && !temp){
-            pivot = temp;
-            temp = temp->next;
-            delete[] pivot;
-        }
-        delete []tail;// eliminando el tail ya que no fue eliminado en el while loop
+        delete this;
 
-        head = new node<T> {other.head->data, nullptr};// creando un nuevo head
-        tail = new node<T> {other.tail->data, nullptr};// creando un nuevo tail
-
-        //creando una nueva lista
-        pivot = head; // para crear nodos en el list
-        temp = other.head->next; // para recorrer el other
-
-        //en el while loop sucede el segmentation fault
-        while(temp != other.tail){
-            pivot->next = new node<T> {temp->data, nullptr}; //esta linea, especificamente
-            pivot = pivot->next;
-            temp = temp->next;
+        auto index = other.size;
+        while(index--) {
+            push_front(other.item(index));
         }
         return *this;
     }
-template <typename T>
-utec::first::linked_list_t<T>::linked_list_t(utec::linked_list_t<T> &&other) noexcept : size(other.size){
-    if(this != nullptr)
-        delete [] this;
-    auto temp = other.head_pointer;
-    auto pivot = head;
-    head = (move(other.head));
 
-    return *this;
+template<typename T>
+utec::first::linked_list_t<T>::linked_list_t(utec::linked_list_t<T> &&other) noexcept: size(other.size),
+head(move(other.head)), tail(move(other.tail)) {
+    other.size = 0;
+    other.head=other.tail= nullptr;
 }
+
 template <typename T>
 utec::linked_list_t<T> &utec::first::linked_list_t<T>::operator=(utec::linked_list_t<T> &&other) noexcept{
+    delete this;
+
+    size = other.size;
+    head = move(other.head);
+    tail = move(other.tail);
+
+    other.head=other.tail= nullptr;
     return *this;
 }
 template <typename T>
 utec::first::linked_list_t<T>::~linked_list_t() {
-    auto temp = head;
-    auto pivot = temp;
-    while(temp != tail && !temp){
-        pivot = temp;
-        temp = temp->next;
-        delete[] pivot;
+    while (size != 0){
+        pop_front();
     }
-    delete []tail;
     tail = head = nullptr;
+    size = 0;
 }
 
 // addition
@@ -86,23 +69,27 @@ void utec::first::linked_list_t<T>::push_front(T item) {
 }
 template <typename T>
 void utec::first::linked_list_t<T>::push_back(T item) {
-    auto *temp = new node<T>{item, nullptr};
-    tail->next = temp;
-    tail = temp;
-    if(head == nullptr) head = tail;
-    size++;
+        auto *temp = new node<T>{item, nullptr};
+        tail->next = temp;
+        tail = temp;
+        if (head == nullptr) head = tail;
+        size++;
 }
 template <typename T>
 void utec::first::linked_list_t<T>::insert(int index, T item) {
+    size++;
     if(!index){
         head = new node<T>{item,head};
+    }
+    else if(index == size - 1){
+        tail->next =new node<T>{item, nullptr};
+        tail = tail->next;
     }
     else{
         auto temp = head;
         while(--index != 0)
             temp = temp->next;
         temp->next = new node<T>{item,temp->next};
-        size++;
     }
 }
 
@@ -143,6 +130,7 @@ void utec::first::linked_list_t<T>::pop_back()  {
 template <typename T>
 void utec::first::linked_list_t<T>::erase(int index) {
     node<T>* temp = head;
+    size--;
     if(head == tail){
         delete head;
         delete tail;
@@ -162,7 +150,6 @@ void utec::first::linked_list_t<T>::erase(int index) {
         node<T>* pivot = temp->next;
         temp->next=pivot->next;
         delete pivot;
-        size--;
     }
 }
 
@@ -195,3 +182,5 @@ template <typename T>
 int utec::first::linked_list_t<T>::get_size() {
     return size;
 }
+
+
