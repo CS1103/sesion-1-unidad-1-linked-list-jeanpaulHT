@@ -34,14 +34,36 @@ int main() {
         result += std::to_string(ll.item(i)) + " ";
     }
     assert(result == "4 3 2 ");
+
     ll.erase(0);
     ll.insert(2,5);
     ll.insert(2,10);
+    result = {};
+    for(int i = 0; i < ll.get_size();++i){
+        result += std::to_string(ll.item(i)) + " ";
+    }
+    assert(result == "3 2 10 5 ");
+
     utec::linked_list_t<int> A (move(ll));
+
+    result={};
+    for(int i = 0; i < ll.get_size();i++){
+        result += std::to_string(ll.item(i)) + " ";
+    }
+    assert(result == "");
+
+    cout<<A.get_size()<<endl;
     for(int i = 0; i < 5; i++)
         A.push_back(i);
-    ll = A;
-    ll.transverse_list();
+    cout<<A.get_size()<<endl;
+    A.transverse_list();
+
+    result = {};
+    for(int i = 0; i < A.get_size();i++){
+        result += std::to_string(A.item(i)) + " ";
+    }
+    assert(result == "3 2 10 5 0 1 2 3 4 ");
+
 
     return 0;
 }

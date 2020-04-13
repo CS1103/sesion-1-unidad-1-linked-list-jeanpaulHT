@@ -165,8 +165,8 @@ void utec::first::linked_list_t<T>::transverse_list() {
 }
 template <typename T>
 T &utec::first::linked_list_t<T>::item(int index) {
-    node<T>* temp = head;
-    while(index-- != 0){
+    auto temp = head;
+    while (index-- != 0) {
         temp = temp->next;
     }
     return temp->data;
